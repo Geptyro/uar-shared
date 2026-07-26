@@ -4,8 +4,8 @@
  * lobbies/games: by lobbyId when known, else by the in-game roster
  * name-set, else each entry stands alone.
  *
- * Lobbies get one extra rule (see `groupPresence`): a reporter whose
- * battlelobby file did not parse must not appear as a second lobby.
+ * Lobbies are the exception: they all collapse into one group, because
+ * nothing observable distinguishes two open lobbies (see `groupPresence`).
  */
 
 /**
@@ -15,36 +15,23 @@
  */
 export function groupPresence(entries) {
 	const groups = new Map();
-	/** lobby entries whose battlelobby file gave us no id to group by */
-	const idlessLobby = [];
-
 	for (const e of entries) {
-		// A lobby roster changes as people join and leave, so two reporters in
-		// the same lobby rarely hold the identical set — matching on it splits
-		// one lobby into several. Games are safe: the roster is fixed once the
-		// game starts, and concurrent games are real.
-		if (e.status === 'lobby' && e.lobbyId == null) {
-			idlessLobby.push(e);
-			continue;
-		}
+		// One lobby at a time. Nothing local tells two lobbies apart while
+		// they are open: SC2 writes replay.server.battlelobby — the only
+		// carrier of a lobby id — at game start, not when the lobby forms
+		// (measured; see the companion's docs/sc2-detection.md). Matching on
+		// the roster instead made one lobby appear as several, because each
+		// member sees a slightly different set as people join and leave.
 		const key =
-			e.lobbyId != null
-				? `id:${e.lobbyId}`
-				: e.roster && e.roster.length > 0
-					? `roster:${e.status}:${[...e.roster].sort().join('\n')}`
-					: `solo:${e.battletag}`;
+			e.status === 'lobby'
+				? 'lobby'
+				: e.lobbyId != null
+					? `id:${e.lobbyId}`
+					: e.roster && e.roster.length > 0
+						? `roster:${e.status}:${[...e.roster].sort().join('\n')}`
+						: `solo:${e.battletag}`;
 		add(groups, key, e);
 	}
-
-	if (idlessLobby.length > 0) {
-		// One lobby forms at a time in practice, so an id-less reporter belongs
-		// to the lobby we can see. Only when several identified lobbies are
-		// live is that guess unsafe — then they stand as their own group.
-		const known = [...groups.values()].filter((g) => g.status === 'lobby');
-		const target = known.length === 1 ? known[0].key : 'lobby:unidentified';
-		for (const e of idlessLobby) add(groups, target, e);
-	}
-
 	return [...groups.values()].sort((a, b) => b.players - a.players);
 }
 

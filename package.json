@@ -1,0 +1,31 @@
+{
+	"name": "uar-shared",
+	"version": "0.1.0",
+	"description": "Shared design tokens, Svelte primitives and modules for the UAR website and companion apps",
+	"type": "module",
+	"license": "MIT",
+	"svelte": "./src/index.js",
+	"exports": {
+		".": {
+			"types": "./src/index.d.ts",
+			"svelte": "./src/index.js",
+			"default": "./src/index.js"
+		},
+		"./tokens.css": "./src/tokens.css",
+		"./base.css": "./src/base.css",
+		"./ready": {
+			"types": "./src/ready.d.ts",
+			"default": "./src/ready.js"
+		},
+		"./presence": {
+			"types": "./src/presence.d.ts",
+			"default": "./src/presence.js"
+		}
+	},
+	"files": [
+		"src"
+	],
+	"peerDependencies": {
+		"svelte": "^5.0.0"
+	}
+}

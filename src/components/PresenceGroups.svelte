@@ -1,12 +1,35 @@
 <script>
 	/**
-	 * Lobby/game groups for a hover pop: heading per group, member rows
-	 * with portraits, "+N more" for players not running the companion app.
+	 * Lobby/game groups for a hover pop. Lists EVERY player in the game —
+	 * the roster comes from the SC2 client, so it covers people who don't
+	 * run the companion app; those who do are shown with their portrait and
+	 * a link to their profile (matched through the `selfName` each reporter
+	 * sends: which roster entry is them).
 	 * `href(member)` returns a profile link or null for plain text.
 	 */
 	import anonPortrait from '../assets/anon-portrait.svg';
 
 	let { groups = [], gameClock = false, href = () => null } = $props();
+
+	/** roster entries, each resolved to its reporting member when there is one */
+	function rows(g) {
+		const byName = new Map(
+			g.members.filter((m) => m.selfName).map((m) => [m.selfName, m])
+		);
+		const roster = g.members.find((m) => m.roster?.length)?.roster ?? [];
+		if (roster.length === 0) {
+			// no roster reported (e.g. a lobby we could not read) — show what we have
+			return g.members.map((m) => ({ name: m.battletag, member: m }));
+		}
+		const rows = roster.map((name) => ({ name, member: byName.get(name) ?? null }));
+		// reporters whose own entry we could not match still deserve a row
+		for (const m of g.members) {
+			if (!m.selfName || !roster.includes(m.selfName)) {
+				if (!rows.some((r) => r.member === m)) rows.push({ name: m.battletag, member: m });
+			}
+		}
+		return rows;
+	}
 </script>
 
 {#each groups as g (g.key)}
@@ -17,19 +40,18 @@
 					g.displayTime / 60
 				)} min{/if}
 		</div>
-		{#each g.members as m (m.battletag)}
-			<div class="row">
-				<img class="portrait" src={m.avatar ?? anonPortrait} alt="" />
-				{#if href(m)}
-					<a class="tag-link" href={href(m)}>{m.battletag}</a>
+		{#each rows(g) as row (row.name)}
+			<div class="row" class:known={row.member}>
+				<img class="portrait" src={row.member?.avatar ?? anonPortrait} alt="" />
+				{#if row.member && href(row.member)}
+					<a class="tag-link" href={href(row.member)}>{row.member.battletag}</a>
+				{:else if row.member}
+					<span class="tag-link">{row.member.battletag}</span>
 				{:else}
-					<span class="tag-link">{m.battletag}</span>
+					<span class="tag-link plain">{row.name}</span>
 				{/if}
 			</div>
 		{/each}
-		{#if g.players > g.members.length}
-			<div class="grp-more">+{g.players - g.members.length} more (not on UAR Tray)</div>
-		{/if}
 	</div>
 {/each}
 
@@ -47,11 +69,6 @@
 		text-transform: uppercase;
 		color: var(--ink-3);
 		padding: 4px 8px 2px;
-	}
-	.grp-more {
-		font-size: 11.5px;
-		color: var(--ink-3);
-		padding: 2px 8px 4px;
 	}
 	.row {
 		display: flex;
@@ -80,6 +97,11 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+	/* players who aren't signed in on the site: name only, quieter */
+	.tag-link.plain {
+		font-weight: 450;
+		color: var(--ink-2);
 	}
 	a.tag-link:hover {
 		color: var(--accent);

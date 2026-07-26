@@ -11,6 +11,7 @@ export interface PresenceGroupEntry {
 	displayTime?: number;
 	roster?: string[];
 	lobbyId?: number | null;
+	selfName?: string;
 }
 
 export interface PresenceGroup<T extends PresenceGroupEntry = PresenceGroupEntry> {

@@ -9,57 +9,101 @@
 	 */
 	import anonPortrait from '../assets/anon-portrait.svg';
 
-	let { groups = [], gameClock = false, href = () => null } = $props();
+	/**
+	 * `known`: in-game name → { toon, avatar } for players the site knows
+	 * but who aren't reporting themselves (they never installed the app).
+	 */
+	let { groups = [], gameClock = false, href = () => null, known = {}, toonHref } = $props();
 
-	/** roster entries, each resolved to its reporting member when there is one */
+	/**
+	 * Roster entries, each resolved to its reporting member when there is
+	 * one. Two ways to tie a reporter to their roster line: the selfName
+	 * they send, or — for older app versions, or when the lobby file could
+	 * not be read — the toon the site resolved for that in-game name.
+	 */
 	function rows(g) {
-		const byName = new Map(
-			g.members.filter((m) => m.selfName).map((m) => [m.selfName, m])
-		);
+		const bySelf = new Map(g.members.filter((m) => m.selfName).map((m) => [m.selfName, m]));
 		const roster = g.members.find((m) => m.roster?.length)?.roster ?? [];
 		if (roster.length === 0) {
 			// no roster reported (e.g. a lobby we could not read) — show what we have
 			return g.members.map((m) => ({ name: m.battletag, member: m }));
 		}
-		const rows = roster.map((name) => ({ name, member: byName.get(name) ?? null }));
-		// reporters whose own entry we could not match still deserve a row
-		for (const m of g.members) {
-			if (!m.selfName || !roster.includes(m.selfName)) {
-				if (!rows.some((r) => r.member === m)) rows.push({ name: m.battletag, member: m });
+		const claimed = new Set();
+		const out = roster.map((name) => {
+			let member = bySelf.get(name) ?? null;
+			if (!member) {
+				const toon = known[name]?.toon;
+				if (toon) member = g.members.find((m) => m.toon && m.toon === toon) ?? null;
 			}
+			if (member) claimed.add(member);
+			return { name, member };
+		});
+		// a reporter we could not place is still in this game — list them
+		for (const m of g.members) {
+			if (!claimed.has(m)) out.push({ name: m.battletag, member: m });
 		}
-		return rows;
+		return out;
 	}
 </script>
 
-{#each groups as g (g.key)}
-	<div class="grp">
-		<div class="grp-head">
-			{g.uar ? 'UAR ' : ''}{g.status === 'ingame' ? 'game' : 'lobby'} · {g.players}
-			player{g.players === 1 ? '' : 's'}{#if gameClock && g.displayTime}&nbsp;· {Math.floor(
-					g.displayTime / 60
-				)} min{/if}
-		</div>
-		{#each rows(g) as row (row.name)}
-			<div class="row" class:known={row.member}>
-				<img class="portrait" src={row.member?.avatar ?? anonPortrait} alt="" />
-				{#if row.member && href(row.member)}
-					<a class="tag-link" href={href(row.member)}>{row.member.battletag}</a>
-				{:else if row.member}
-					<span class="tag-link">{row.member.battletag}</span>
-				{:else}
-					<span class="tag-link plain">{row.name}</span>
-				{/if}
+<div class="groups" class:multi={groups.length > 1}>
+		{#each groups as g (g.key)}
+			<div class="grp">
+			<div class="grp-head">
+				{g.uar ? 'UAR ' : ''}{g.status === 'ingame' ? 'game' : 'lobby'} · {g.players}
+				player{g.players === 1 ? '' : 's'}{#if gameClock && g.displayTime}&nbsp;· {Math.floor(
+						g.displayTime / 60
+					)} min{/if}
 			</div>
-		{/each}
-	</div>
-{/each}
+			{#each rows(g) as row (row.name)}
+				{@const site = row.member ? null : known[row.name]}
+				{@const link = row.member ? href(row.member) : site && toonHref?.(site.toon)}
+				<div class="row">
+					<img
+						class="portrait"
+						src={row.member?.avatar ?? site?.avatar ?? anonPortrait}
+						alt=""
+					/>
+					<!-- always the in-game name: that is who you see in the lobby.
+					     The account battletag rides along as the tooltip. -->
+					{#if link}
+						<a class="tag-link" href={link} title={row.member?.battletag}>{row.name}</a>
+					{:else}
+						<span class="tag-link" class:plain={!row.member} title={row.member?.battletag}>
+							{row.name}
+						</span>
+					{/if}
+				</div>
+			{/each}
+		</div>
+	{/each}
+</div>
 
 <style>
-	.grp + .grp {
+	.groups {
+		display: flex;
+		flex-direction: column;
+	}
+	/* several lobbies/games: columns, so a 12-player game stays readable */
+	.groups.multi {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0;
+		max-width: 80vw;
+	}
+	.groups.multi .grp {
+		min-width: 200px;
+		max-width: 240px;
+	}
+	.groups:not(.multi) .grp + .grp {
 		border-top: 1px solid var(--border);
 		margin-top: 4px;
 		padding-top: 4px;
+	}
+	.groups.multi .grp + .grp {
+		border-left: 1px solid var(--border);
+		padding-left: 6px;
+		margin-left: 6px;
 	}
 	.grp-head {
 		font-family: var(--mono);

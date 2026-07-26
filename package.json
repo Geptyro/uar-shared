@@ -1,6 +1,6 @@
 {
 	"name": "uar-shared",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "Shared design tokens, Svelte primitives and modules for the UAR website and companion apps",
 	"type": "module",
 	"license": "MIT",

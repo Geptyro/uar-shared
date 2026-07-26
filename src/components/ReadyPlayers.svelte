@@ -7,7 +7,9 @@
 	import anonPortrait from '../assets/anon-portrait.svg';
 	import { minutesLeft } from '../ready.js';
 
-	let { players = [], now = Date.now(), href = () => null } = $props();
+	/** `statusOf(battletag)`: 'lobby' | 'ingame' | undefined — renders the
+	 * presence badge next to the name in the presence colors. */
+	let { players = [], now = Date.now(), href = () => null, statusOf } = $props();
 </script>
 
 {#each players as p (p.battletag)}
@@ -17,6 +19,11 @@
 			<a class="tag-link" href={href(p)}>{p.battletag}</a>
 		{:else}
 			<span class="tag-link">{p.battletag}</span>
+		{/if}
+		{#if statusOf?.(p.battletag) === 'lobby'}
+			<span class="mini-tag">in lobby</span>
+		{:else if statusOf?.(p.battletag) === 'ingame'}
+			<span class="mini-tag game">in game</span>
 		{/if}
 		<span class="left">{minutesLeft(p.until, now)} min</span>
 	</div>
@@ -58,5 +65,25 @@
 		font: 500 11px/1 var(--mono);
 		font-variant-numeric: tabular-nums;
 		color: var(--ink-3);
+	}
+	.mini-tag {
+		font: 550 9.5px/1 var(--mono);
+		letter-spacing: 0.04em;
+		padding: 2.5px 7px;
+		border-radius: 99px;
+		color: var(--on-accent);
+		background: var(--lobby, #2e7f74);
+		white-space: nowrap;
+	}
+	.mini-tag.game {
+		background: var(--game, #67589f);
+	}
+	@media (prefers-color-scheme: dark) {
+		.mini-tag {
+			background: var(--lobby, #7bc8ba);
+		}
+		.mini-tag.game {
+			background: var(--game, #a99ad8);
+		}
 	}
 </style>

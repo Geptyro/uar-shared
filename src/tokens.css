@@ -28,6 +28,8 @@
 	--hostile-soft: color-mix(in srgb, var(--hostile) 11%, transparent);
 	--item: #91702c;
 	--item-soft: color-mix(in srgb, var(--item) 13%, transparent);
+	--lobby: #2e7f74;
+	--game: #67589f;
 	--scroll-thumb: #b9b3a0;
 	--scroll-thumb-hover: #9b9480;
 	--shadow-1: 0 1px 2px rgb(30 32 24 / 0.05), 0 1px 1px rgb(30 32 24 / 0.03);
@@ -60,6 +62,8 @@
 		--mos: #7fadd1;
 		--hostile: #d97f61;
 		--item: #cfa95c;
+		--lobby: #7bc8ba;
+		--game: #a99ad8;
 		--scroll-thumb: #3c4430;
 		--scroll-thumb-hover: #4f5940;
 		--shadow-1: 0 1px 2px rgb(0 0 0 / 0.35);

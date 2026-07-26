@@ -21,3 +21,7 @@ export interface PresenceGroup<T extends PresenceGroupEntry = PresenceGroupEntry
 export declare function groupPresence<T extends PresenceGroupEntry>(
 	entries: T[]
 ): PresenceGroup<T>[];
+
+export declare function splitPresence<T extends PresenceGroupEntry>(
+	entries: T[]
+): { lobbies: PresenceGroup<T>[]; games: PresenceGroup<T>[] };

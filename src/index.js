@@ -9,3 +9,6 @@ export { default as Tag } from './components/Tag.svelte';
 export { default as Chip } from './components/Chip.svelte';
 export { default as Toggle } from './components/Toggle.svelte';
 export { default as SectionHeading } from './components/SectionHeading.svelte';
+export { default as HoverPop } from './components/HoverPop.svelte';
+export { default as PresenceGroups } from './components/PresenceGroups.svelte';
+export { default as PresenceChips } from './components/PresenceChips.svelte';

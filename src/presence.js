@@ -34,3 +34,18 @@ export function groupPresence(entries) {
 	}
 	return [...groups.values()].sort((a, b) => b.players - a.players);
 }
+
+/**
+ * Groups entries and splits them into lobbies and games — the exact shape
+ * the top-bar chips consume. Deliberately no UAR filter: a signed-in
+ * player's lobby on a UAR site is worth showing even before the map is
+ * confirmed (the battlelobby file often appears only at game start).
+ * @param {Parameters<typeof groupPresence>[0]} entries
+ */
+export function splitPresence(entries) {
+	const groups = groupPresence(entries);
+	return {
+		lobbies: groups.filter((g) => g.status === 'lobby'),
+		games: groups.filter((g) => g.status === 'ingame')
+	};
+}

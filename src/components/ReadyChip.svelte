@@ -15,9 +15,11 @@
 		/** number of players currently flagged */
 		count = 0,
 		busy = false,
-		/** flagging is blocked (player is in a lobby/game) — shows lockedLabel */
+		/** flagging is blocked (player is in a lobby/game) */
 		locked = false,
-		lockedLabel = 'In game',
+		/** 'lobby' | 'ingame' — colors the locked chip like the presence chips */
+		lockedStatus = 'lobby',
+		lockedLabel,
 		/** toggle own flag: called with true (flag/restart) or false (withdraw) */
 		ontoggle,
 		/** guest click — omit and set guestHref to render a link instead */
@@ -81,17 +83,28 @@
 			</svg>
 		</button>
 	</div>
+{:else if signedIn && locked}
+	<!-- accounted for: the chip takes the presence color of where you are -->
+	<span
+		class="ready-btn locked"
+		class:ingame={lockedStatus === 'ingame'}
+		title="No need for the ready flag — you're already {lockedStatus === 'ingame'
+			? 'in a game'
+			: 'in a lobby'}"
+	>
+		{@render flag()}
+		{lockedLabel ?? (lockedStatus === 'ingame' ? 'Already in a game' : 'Already in a lobby')}
+		{#if count > 0}<span class="count">{count}</span>{/if}
+	</span>
 {:else if signedIn}
 	<button
 		class="ready-btn plain"
 		onclick={() => ontoggle?.(true)}
-		disabled={busy || locked}
-		title={locked
-			? 'You cannot flag yourself while in a lobby or game'
-			: 'Flag yourself as ready to play for the next hour'}
+		disabled={busy}
+		title="Flag yourself as ready to play for the next hour"
 	>
 		{@render flag()}
-		{locked ? lockedLabel : 'Ready to play?'}
+		Ready to play?
 		{#if count > 0}<span class="count">{count}</span>{/if}
 	</button>
 {:else if count > 0}
@@ -165,6 +178,31 @@
 	}
 	.ready-btn.on.low {
 		--chip-bg: var(--hostile);
+	}
+	/* locked = already in a lobby (teal) / game (violet), like the
+	   presence chips; not interactive */
+	.ready-btn.locked {
+		align-items: center;
+		gap: 7px;
+		padding: 0 14px;
+		background: var(--lobby, #2e7f74);
+		color: var(--on-accent);
+		border-color: var(--lobby, #2e7f74);
+		cursor: default;
+	}
+	.ready-btn.locked.ingame {
+		background: var(--game, #67589f);
+		border-color: var(--game, #67589f);
+	}
+	@media (prefers-color-scheme: dark) {
+		.ready-btn.locked {
+			background: var(--lobby, #7bc8ba);
+			border-color: var(--lobby, #7bc8ba);
+		}
+		.ready-btn.locked.ingame {
+			background: var(--game, #a99ad8);
+			border-color: var(--game, #a99ad8);
+		}
 	}
 	/* segments inside the flagged chip: toggle area + restart */
 	.seg {

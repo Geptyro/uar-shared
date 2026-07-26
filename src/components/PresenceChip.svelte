@@ -13,7 +13,14 @@
 				: `${count} ${count === 1 ? 'game' : 'games'}`)
 	);
 	const tip = $derived(
-		title ?? (kind === 'lobby' ? 'Open UAR lobbies — hover for who is in' : 'UAR games running')
+		title ??
+			(count === 0
+				? kind === 'lobby'
+					? 'No open UAR lobbies right now'
+					: 'No UAR games running right now'
+				: kind === 'lobby'
+					? 'Open UAR lobbies — hover for who is in'
+					: 'UAR games running')
 	);
 </script>
 
@@ -36,9 +43,13 @@
 {/snippet}
 
 {#if href}
-	<a class="presence-chip {kind}" {href} title={tip}>{@render icon()}{text}</a>
+	<a class="presence-chip {kind}" class:empty={count === 0} {href} title={tip}>
+		{@render icon()}{text}
+	</a>
 {:else}
-	<button class="presence-chip {kind}" {onclick} title={tip}>{@render icon()}{text}</button>
+	<button class="presence-chip {kind}" class:empty={count === 0} {onclick} title={tip}>
+		{@render icon()}{text}
+	</button>
 {/if}
 
 <style>
@@ -57,17 +68,39 @@
 		transition: all 120ms ease;
 		border: 1px solid transparent;
 	}
+	/* teal lobbies / violet games — hues no other top-bar chip uses;
+	   fallbacks cover consumers that don't load uar-shared tokens yet */
 	.presence-chip.lobby {
-		background: var(--item);
+		background: var(--lobby, #2e7f74);
 		color: var(--on-accent);
-		border-color: var(--item);
+		border-color: var(--lobby, #2e7f74);
 	}
 	.presence-chip.game {
-		background: var(--mos);
+		background: var(--game, #67589f);
 		color: var(--on-accent);
-		border-color: var(--mos);
+		border-color: var(--game, #67589f);
+	}
+	@media (prefers-color-scheme: dark) {
+		.presence-chip.lobby {
+			background: var(--lobby, #7bc8ba);
+			border-color: var(--lobby, #7bc8ba);
+		}
+		.presence-chip.game {
+			background: var(--game, #a99ad8);
+			border-color: var(--game, #a99ad8);
+		}
 	}
 	.presence-chip:hover {
 		filter: brightness(1.08);
+	}
+	/* nothing live: quiet pill in the top bar's own tones */
+	.presence-chip.empty {
+		background: var(--sidebar-2);
+		color: var(--sidebar-ink-2);
+		border-color: var(--sidebar-line);
+	}
+	.presence-chip.empty:hover {
+		filter: none;
+		color: var(--sidebar-ink);
 	}
 </style>

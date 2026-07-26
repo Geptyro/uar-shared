@@ -2,7 +2,7 @@
 
 Shared design tokens, Svelte primitives and modules for
 [uar.cedricdessalles.dev](https://uar.cedricdessalles.dev) and its companion
-apps ([uar-tray](https://github.com/Geptyro/uar-tray)). One source of truth —
+apps ([uar-companion](https://github.com/Geptyro/uar-companion)). One source of truth —
 no duplicated palettes or components between the website and the apps.
 
 ## Usage
@@ -32,6 +32,6 @@ Fonts are the consumer's job (the tokens reference them):
 
 - **In**: design tokens, base styles, UI primitives used by more than one
   app, and shared modules (planned: the SC2 replay MPQ reader both the
-  website and uar-tray currently keep copies of).
+  website and uar-companion currently keep copies of).
 - **Out**: domain components (unit tables, wiki pages, app screens) — those
   belong to their app.

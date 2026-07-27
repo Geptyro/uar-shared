@@ -29,6 +29,10 @@ import { placeFloating } from 'uar-shared/place'; // viewport-clamped card place
 and countdown only, no prose — so a top bar full of chips still fits on one
 line. The wording stays in the `title` and in the hover pop's heading.
 
+`AccountChip` takes it too: portrait and cog end-caps only, with the battletag
+moved into the tooltip. The name is a full line of mono text, so it is usually
+the widest thing left in a narrow bar.
+
 `HoverPop` opens on hover/focus with a mouse and on tap with a finger, and
 places its card with `placeFloating()`, which flips to whichever side fits
 and clamps the card inside the viewport. Anything that floats next to an

@@ -15,13 +15,22 @@
 		title,
 		cogHref,
 		oncog,
-		cogTitle = 'Account settings'
+		cogTitle = 'Account settings',
+		/**
+		 * Portrait and cog only, no battletag — for narrow top bars, matching
+		 * the website's own chip below 700px. The name is a whole line of mono
+		 * text and by far the widest thing in the pill; it moves into the
+		 * tooltip rather than disappearing outright.
+		 */
+		compact = false
 	} = $props();
+
+	const tip = $derived(compact && battletag ? [battletag, title].filter(Boolean).join(' · ') : title);
 </script>
 
 {#snippet main()}
 	<img class="acct-avatar" src={avatar ?? anonPortrait} alt="" />
-	{battletag}
+	{#if !compact}<span class="acct-tag">{battletag}</span>{/if}
 {/snippet}
 
 {#snippet cogIcon()}
@@ -36,9 +45,9 @@
 
 <div class="acct-chip">
 	{#if href}
-		<a class="acct-main" {href} {title}>{@render main()}</a>
+		<a class="acct-main" class:compact {href} title={tip}>{@render main()}</a>
 	{:else}
-		<button class="acct-main" {onclick} {title}>{@render main()}</button>
+		<button class="acct-main" class:compact {onclick} title={tip}>{@render main()}</button>
 	{/if}
 	{#if cogHref}
 		<a class="acct-cog" href={cogHref} title={cogTitle} aria-label={cogTitle}>{@render cogIcon()}</a>
@@ -76,6 +85,12 @@
 		border: none;
 		cursor: pointer;
 		transition: all 120ms ease;
+	}
+	/* no name to sit between them: the pill collapses to portrait + cog, and
+	   the right padding only has to clear the cog's overlap */
+	.acct-main.compact {
+		gap: 0;
+		padding-right: 15px;
 	}
 	.acct-main:hover {
 		background: color-mix(in srgb, currentColor 12%, transparent);

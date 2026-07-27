@@ -129,7 +129,11 @@
 	}
 	.pop-card {
 		position: fixed;
-		z-index: 40;
+		/* the host app's floating layer, above its own chrome — a bare 40 put
+		   this under the website's fixed nav rail, which cut a column straight
+		   through every top-bar pop. The fallback is for a host with no scale
+		   of its own (the companion app has no chrome to clear). */
+		z-index: var(--z-float, 60);
 		min-width: 240px;
 		/* never wider or taller than the screen it has to fit on */
 		max-width: calc(100vw - 16px);

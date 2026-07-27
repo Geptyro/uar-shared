@@ -3,14 +3,20 @@
 	 * Top-bar count chip for SC2 presence: open lobbies (amber — a lobby is
 	 * forming, join it) or running games (MOS blue — informational). Same
 	 * 30px pill anatomy as the ready chip. Purely presentational.
+	 *
+	 * `compact` drops the noun and keeps icon + count, for narrow top bars
+	 * where every chip has to fit on one line. The wording survives in the
+	 * tooltip and in the hover pop's heading.
 	 */
-	let { kind = 'lobby', count = 0, label, title, onclick, href } = $props();
+	let { kind = 'lobby', count = 0, label, title, onclick, href, compact = false } = $props();
 
 	const text = $derived(
-		label ??
-			(kind === 'lobby'
-				? `${count} ${count === 1 ? 'lobby' : 'lobbies'}`
-				: `${count} ${count === 1 ? 'game' : 'games'}`)
+		compact
+			? String(count)
+			: (label ??
+					(kind === 'lobby'
+						? `${count} ${count === 1 ? 'lobby' : 'lobbies'}`
+						: `${count} ${count === 1 ? 'game' : 'games'}`))
 	);
 	const tip = $derived(
 		title ??
@@ -43,11 +49,11 @@
 {/snippet}
 
 {#if href}
-	<a class="presence-chip {kind}" class:empty={count === 0} {href} title={tip}>
+	<a class="presence-chip {kind}" class:empty={count === 0} class:compact {href} title={tip}>
 		{@render icon()}{text}
 	</a>
 {:else}
-	<button class="presence-chip {kind}" class:empty={count === 0} {onclick} title={tip}>
+	<button class="presence-chip {kind}" class:empty={count === 0} class:compact {onclick} title={tip}>
 		{@render icon()}{text}
 	</button>
 {/if}
@@ -67,6 +73,11 @@
 		cursor: pointer;
 		transition: all 120ms ease;
 		border: 1px solid transparent;
+	}
+	/* icon + count only: tighter padding so several chips fit one line */
+	.presence-chip.compact {
+		gap: 6px;
+		padding: 0 11px;
 	}
 	/* teal lobbies / violet games — hues no other top-bar chip uses;
 	   fallbacks cover consumers that don't load uar-shared tokens yet */

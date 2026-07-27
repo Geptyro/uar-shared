@@ -24,7 +24,13 @@
 		ontoggle,
 		/** guest click — omit and set guestHref to render a link instead */
 		onguest,
-		guestHref
+		guestHref,
+		/**
+		 * Narrow top bars: the flag and the count, nothing else. The countdown
+		 * goes too — the chip already shifts green → gold → red as the hour
+		 * runs out, and the exact minutes stay in the tooltip and the pop.
+		 */
+		compact = false
 	} = $props();
 
 	const flagged = $derived(signedIn && minutes !== null);
@@ -49,7 +55,7 @@
 
 {#if flagged}
 	<!-- flagged: the chip is a group — toggle area + inline restart segment -->
-	<div class="ready-btn on" class:mid={level === 'mid'} class:low={level === 'low'}>
+	<div class="ready-btn on" class:mid={level === 'mid'} class:low={level === 'low'} class:compact>
 		<button
 			class="seg main"
 			onclick={() => ontoggle?.(false)}
@@ -57,7 +63,7 @@
 			title={`Ready for ${minutes} more min — click to withdraw`}
 		>
 			{@render flag()}
-			Ready · {minutes} min
+			{#if !compact}Ready · {minutes} min{/if}
 			{#if count > 0}<span class="count">{count}</span>{/if}
 		</button>
 		<button
@@ -88,40 +94,49 @@
 	<span
 		class="ready-btn locked"
 		class:ingame={lockedStatus === 'ingame'}
+		class:compact
 		title="No need for the ready flag — you're already {lockedStatus === 'ingame'
 			? 'in a game'
 			: 'in a lobby'}"
 	>
 		{@render flag()}
-		{lockedLabel ?? (lockedStatus === 'ingame' ? 'Already in a game' : 'Already in a lobby')}
+		{#if !compact}{lockedLabel ??
+				(lockedStatus === 'ingame' ? 'Already in a game' : 'Already in a lobby')}{/if}
 		{#if count > 0}<span class="count">{count}</span>{/if}
 	</span>
 {:else if signedIn}
 	<button
 		class="ready-btn plain"
+		class:compact
 		onclick={() => ontoggle?.(true)}
 		disabled={busy}
 		title="Flag yourself as ready to play for the next hour"
 	>
 		{@render flag()}
-		Ready to play?
+		{#if !compact}Ready to play?{/if}
 		{#if count > 0}<span class="count">{count}</span>{/if}
 	</button>
 {:else if count > 0}
 	{#if guestHref}
-		<a class="ready-btn plain guest" href={guestHref} title="Sign in with Battle.net to flag yourself too">
+		<a
+			class="ready-btn plain guest"
+			class:compact
+			href={guestHref}
+			title="Sign in with Battle.net to flag yourself too"
+		>
 			{@render flag()}
-			Ready to play
+			{#if !compact}Ready to play{/if}
 			<span class="count">{count}</span>
 		</a>
 	{:else}
 		<button
 			class="ready-btn plain guest"
+			class:compact
 			onclick={() => onguest?.()}
 			title="Sign in with Battle.net to flag yourself too"
 		>
 			{@render flag()}
-			Ready to play
+			{#if !compact}Ready to play{/if}
 			<span class="count">{count}</span>
 		</button>
 	{/if}
@@ -147,6 +162,16 @@
 		gap: 7px;
 		padding: 0 14px;
 		cursor: pointer;
+	}
+	/* icon (+ countdown, + count) only — tighter, like the presence chips */
+	.ready-btn.plain.compact,
+	.ready-btn.locked.compact {
+		gap: 6px;
+		padding: 0 11px;
+	}
+	.ready-btn.compact .seg.main {
+		gap: 6px;
+		padding: 0 22px 0 11px;
 	}
 	.ready-btn.plain:hover {
 		color: var(--accent-hover);

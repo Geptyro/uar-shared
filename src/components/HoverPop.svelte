@@ -1,52 +1,152 @@
 <script>
 	/**
-	 * Top-bar hover dropdown: renders the `trigger` snippet (a chip) and a
-	 * card that appears under it on hover/focus — the website's pop
-	 * pattern, shared so the tray behaves identically.
+	 * Top-bar dropdown: renders the `trigger` snippet (a chip) and a card that
+	 * appears next to it — on hover/focus with a mouse, on tap with a finger.
+	 *
+	 * The card is position:fixed and placed by the shared placer, so it is
+	 * clamped into the viewport instead of running off the edge (a chip near
+	 * the right edge of a phone used to push its pop half off-screen), and it
+	 * escapes any clipping ancestor. Contents stay interactive — this is a
+	 * menu, not a tooltip — so the pointer may travel from chip to card
+	 * across the gap without it closing.
 	 */
+	import { placeFloating } from '../place.js';
+
 	/** `disabled`: render the trigger alone (nothing to drop down). */
-	let { heading, trigger, children, disabled = false } = $props();
+	let { heading, trigger, children, disabled = false, align = 'end' } = $props();
+
+	let wrap = $state(null);
+	let card = $state(null);
+	let open = $state(false);
+	/** placed only after the first measure, so the card never flashes at 0,0 */
+	let placed = $state(false);
+	let x = $state(0);
+	let y = $state(0);
+	let timer;
+
+	function show() {
+		clearTimeout(timer);
+		if (!disabled) open = true;
+	}
+
+	function hide() {
+		clearTimeout(timer);
+		open = false;
+		placed = false;
+	}
+
+	/** crossing the gap between chip and card must not close it */
+	function leave() {
+		clearTimeout(timer);
+		timer = setTimeout(hide, 140);
+	}
+
+	$effect(() => {
+		if (!open) return;
+		const place = () => {
+			if (!wrap || !card) return;
+			const r = placeFloating({
+				anchor: wrap.getBoundingClientRect(),
+				card: card.getBoundingClientRect(),
+				viewport: {
+					width: document.documentElement.clientWidth,
+					height: document.documentElement.clientHeight
+				},
+				placement: 'bottom',
+				align
+			});
+			x = r.x;
+			y = r.y;
+			placed = true;
+		};
+		place();
+		// the page scrolls inside <main>, so listen in the capture phase to
+		// catch every scrolling ancestor rather than just the window
+		window.addEventListener('scroll', place, true);
+		window.addEventListener('resize', place);
+		return () => {
+			window.removeEventListener('scroll', place, true);
+			window.removeEventListener('resize', place);
+		};
+	});
+
+	$effect(() => () => clearTimeout(timer));
+
+	/** touch has no hover: tap the chip to toggle its pop */
+	function tapTrigger(e) {
+		if (e.pointerType !== 'touch') return;
+		if (open) hide();
+		else show();
+	}
+
+	/** a tap or click anywhere else dismisses it */
+	function tapOutside(e) {
+		if (!open) return;
+		if (wrap?.contains(e.target) || card?.contains(e.target)) return;
+		hide();
+	}
 </script>
 
-<div class="hover-wrap">
+<svelte:window
+	onpointerdown={tapOutside}
+	onkeydown={(e) => {
+		if (e.key === 'Escape' && open) hide();
+	}}
+/>
+
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+	class="hover-wrap"
+	bind:this={wrap}
+	onmouseenter={show}
+	onmouseleave={leave}
+	onfocusin={show}
+	onfocusout={leave}
+	onpointerdown={tapTrigger}
+>
 	{@render trigger?.()}
-	{#if !disabled}
-		<div class="pop">
-			<div class="pop-card">
-				{#if heading}<div class="pop-head">{heading}</div>{/if}
-				{@render children?.()}
-			</div>
-		</div>
-	{/if}
 </div>
+
+{#if open && !disabled}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="pop-card"
+		class:placed
+		bind:this={card}
+		style="left: {x}px; top: {y}px"
+		onmouseenter={show}
+		onmouseleave={leave}
+	>
+		{#if heading}<div class="pop-head">{heading}</div>{/if}
+		{@render children?.()}
+	</div>
+{/if}
 
 <style>
 	.hover-wrap {
-		position: relative;
 		display: flex;
 		align-items: center;
 	}
-	/* transparent padding keeps hover alive over the gap */
-	.pop {
-		display: none;
-		position: absolute;
-		top: 100%;
-		right: 0;
-		padding-top: 8px;
-		z-index: 40;
-	}
-	.hover-wrap:hover .pop,
-	.hover-wrap:focus-within .pop {
-		display: block;
-	}
 	.pop-card {
+		position: fixed;
+		z-index: 40;
 		min-width: 240px;
+		/* never wider or taller than the screen it has to fit on */
+		max-width: calc(100vw - 16px);
+		max-height: calc(100dvh - var(--topbar-h, 52px) - 24px);
+		overflow-y: auto;
 		background: var(--surface);
 		color: var(--ink);
 		border: 1px solid var(--border);
 		border-radius: var(--r);
 		box-shadow: var(--shadow-2);
 		padding: 6px;
+		/* hidden until the first measure lands, then faded in */
+		opacity: 0;
+		transition: opacity 110ms ease;
+	}
+	.pop-card.placed {
+		opacity: 1;
 	}
 	.pop-head {
 		font-family: var(--mono);
@@ -58,5 +158,10 @@
 		padding: 5px 8px 7px;
 		border-bottom: 1px solid var(--border);
 		margin-bottom: 4px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.pop-card {
+			transition: none;
+		}
 	}
 </style>

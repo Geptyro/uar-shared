@@ -18,7 +18,22 @@ import 'uar-shared/base.css';   // base styles + primitive classes
 
 // Svelte 5 primitives (thin wrappers over the base.css classes)
 import { Card, Button, Tag, Chip, Toggle, SectionHeading } from 'uar-shared';
+
+// helpers
+import { placeFloating } from 'uar-shared/place'; // viewport-clamped card placement
 ```
+
+### Narrow top bars
+
+`PresenceChips`, `PresenceChip` and `ReadyChip` take `compact` — icon, count
+and countdown only, no prose — so a top bar full of chips still fits on one
+line. The wording stays in the `title` and in the hover pop's heading.
+
+`HoverPop` opens on hover/focus with a mouse and on tap with a finger, and
+places its card with `placeFloating()`, which flips to whichever side fits
+and clamps the card inside the viewport. Anything that floats next to an
+anchor should go through that function rather than CSS anchoring, or it ends
+up half off-screen on a phone.
 
 Components ship as source (`.svelte`, plain JS) and are compiled by the
 consumer's Svelte tooling — both consumers use Vite + `vite-plugin-svelte`.

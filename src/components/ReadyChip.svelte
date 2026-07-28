@@ -13,7 +13,7 @@
 	 *
 	 *  - flagged:              countdown, green → gold → red
 	 *  - not flagged, waiting: amber invitation pill (signed in or not)
-	 *  - not flagged, nobody:  plain "Ready to play?" (signed in) / hidden
+	 *  - not flagged, nobody:  plain "Ready to play now?" (signed in) / hidden
 	 *
 	 * Purely presentational — data and transport are the consumer's job.
 	 */
@@ -127,7 +127,7 @@
 			: 'Flag yourself as ready to play for the next hour'}
 	>
 		{@render flag()}
-		{#if !compact}Ready to play?{/if}
+		{#if !compact}Ready to play now?{/if}
 		{#if count > 0}<span class="count">{count}</span>{/if}
 	</button>
 {:else if count > 0}
@@ -139,7 +139,7 @@
 			title="Sign in with Battle.net to flag yourself too"
 		>
 			{@render flag()}
-			{#if !compact}Ready to play{/if}
+			{#if !compact}Ready to play now{/if}
 			<span class="count">{count}</span>
 		</a>
 	{:else}
@@ -150,7 +150,7 @@
 			title="Sign in with Battle.net to flag yourself too"
 		>
 			{@render flag()}
-			{#if !compact}Ready to play{/if}
+			{#if !compact}Ready to play now{/if}
 			<span class="count">{count}</span>
 		</button>
 	{/if}

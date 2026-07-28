@@ -1,15 +1,19 @@
 <script>
 	/**
-	 * Rows of currently-flagged players (portrait · battletag · minutes
-	 * left) — the content of the website's hover dropdown, reusable inline.
-	 * `href(player)` returns a profile link or null for plain text.
+	 * Rows of currently-flagged players (portrait · battletag) — the content of
+	 * the website's hover dropdown, reusable inline. `href(player)` returns a
+	 * profile link or null for plain text.
+	 *
+	 * No per-player countdown: someone else's flag lapsing in twelve minutes
+	 * says nothing a reader can act on, and it invites being misread as "leaving
+	 * in twelve minutes". Your own remaining hour still shows on your chip,
+	 * where it pairs with the restart button.
 	 */
 	import anonPortrait from '../assets/anon-portrait.svg';
-	import { minutesLeft } from '../ready.js';
 
 	/** `statusOf(battletag)`: 'lobby' | 'ingame' | undefined — renders the
 	 * presence badge next to the name in the presence colors. */
-	let { players = [], now = Date.now(), href = () => null, statusOf } = $props();
+	let { players = [], href = () => null, statusOf } = $props();
 </script>
 
 {#each players as p (p.battletag)}
@@ -25,7 +29,6 @@
 		{:else if statusOf?.(p.battletag) === 'ingame'}
 			<span class="mini-tag game">in game</span>
 		{/if}
-		<span class="left">{minutesLeft(p.until, now)} min</span>
 	</div>
 {/each}
 
@@ -60,11 +63,6 @@
 	}
 	a.tag-link:hover {
 		color: var(--accent);
-	}
-	.left {
-		font: 500 11px/1 var(--mono);
-		font-variant-numeric: tabular-nums;
-		color: var(--ink-3);
 	}
 	.mini-tag {
 		font: 550 9.5px/1 var(--mono);

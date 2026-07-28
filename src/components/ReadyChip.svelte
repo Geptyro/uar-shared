@@ -1,9 +1,20 @@
 <script>
 	/**
-	 * The "ready to play" top-bar chip, all three states:
-	 *  - flagged: countdown + inline restart end-cap, green → gold → red
-	 *  - signed-in: "Ready to play?" pill
-	 *  - guest: amber attention pill (shown when someone is ready)
+	 * The "ready to play" top-bar chip.
+	 *
+	 * The colour carries two different messages, and they are kept apart on
+	 * purpose. Green → gold → red is a *countdown*: it only ever describes your
+	 * own flag running out, so it belongs to the flagged chip alone. Amber is an
+	 * *invitation*: other players are waiting and you are not one of them.
+	 *
+	 * That second one used to be shown to signed-out visitors only, which had it
+	 * backwards — a signed-in player is precisely the one who can act on it.
+	 * Anyone who is not currently flagged now gets it.
+	 *
+	 *  - flagged:              countdown, green → gold → red
+	 *  - not flagged, waiting: amber invitation pill (signed in or not)
+	 *  - not flagged, nobody:  plain "Ready to play?" (signed in) / hidden
+	 *
 	 * Purely presentational — data and transport are the consumer's job.
 	 */
 	let {
@@ -107,10 +118,13 @@
 {:else if signedIn}
 	<button
 		class="ready-btn plain"
+		class:attn={count > 0}
 		class:compact
 		onclick={() => ontoggle?.(true)}
 		disabled={busy}
-		title="Flag yourself as ready to play for the next hour"
+		title={count > 0
+			? `${count} ${count === 1 ? 'player is' : 'players are'} ready to play — flag yourself to join them`
+			: 'Flag yourself as ready to play for the next hour'}
 	>
 		{@render flag()}
 		{#if !compact}Ready to play?{/if}
@@ -119,7 +133,7 @@
 {:else if count > 0}
 	{#if guestHref}
 		<a
-			class="ready-btn plain guest"
+			class="ready-btn plain attn"
 			class:compact
 			href={guestHref}
 			title="Sign in with Battle.net to flag yourself too"
@@ -130,7 +144,7 @@
 		</a>
 	{:else}
 		<button
-			class="ready-btn plain guest"
+			class="ready-btn plain attn"
 			class:compact
 			onclick={() => onguest?.()}
 			title="Sign in with Battle.net to flag yourself too"
@@ -181,13 +195,15 @@
 		opacity: 0.6;
 		cursor: default;
 	}
-	/* signed-out visitors: amber attention pill — players are ready, join in */
-	.ready-btn.guest {
+	/* players are waiting and you have not joined them — amber invitation,
+	   deliberately not the accent green, which already means "your own flag is
+	   healthy" and would make the two states indistinguishable at a glance */
+	.ready-btn.attn {
 		background: var(--item);
 		color: var(--on-accent);
 		border-color: var(--item);
 	}
-	.ready-btn.guest:hover {
+	.ready-btn.attn:hover {
 		color: var(--on-accent);
 		border-color: var(--item);
 		filter: brightness(1.08);

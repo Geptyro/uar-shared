@@ -1,6 +1,6 @@
 {
 	"name": "uar-shared",
-	"version": "0.8.0",
+	"version": "0.8.1",
 	"description": "UAR's palette and its own Svelte components, on top of sveltekit-commons",
 	"type": "module",
 	"license": "MIT",
@@ -28,6 +28,6 @@
 		"svelte": "^5.0.0"
 	},
 	"dependencies": {
-		"sveltekit-commons": "git+https://github.com/Geptyro/sveltekit-commons.git#semver:^0.5.0"
+		"sveltekit-commons": "git+https://github.com/Geptyro/sveltekit-commons.git#semver:^0.6.0"
 	}
 }

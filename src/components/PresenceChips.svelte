@@ -3,7 +3,7 @@
 	 * The complete top-bar presence cluster: lobby + game chips with their
 	 * hover rosters. One composition for the website and the tray.
 	 */
-	import HoverPop from './HoverPop.svelte';
+	import { HoverPop } from 'sveltekit-commons';
 	import PresenceChip from './PresenceChip.svelte';
 	import PresenceGroups from './PresenceGroups.svelte';
 

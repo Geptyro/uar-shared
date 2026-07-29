@@ -165,7 +165,7 @@
 		color: var(--sidebar-ink);
 		border: 1px solid var(--sidebar-line);
 		border-radius: 99px;
-		font: 500 12px/1 var(--mono);
+		font: 500 12px/1 var(--font-mono);
 		font-variant-numeric: tabular-nums;
 		text-decoration: none;
 		white-space: nowrap;
@@ -188,7 +188,7 @@
 		padding: 0 22px 0 11px;
 	}
 	.ready-btn.plain:hover {
-		color: var(--accent-hover);
+		color: var(--accent-dim);
 		border-color: var(--accent);
 	}
 	.ready-btn.plain:disabled {
@@ -200,18 +200,18 @@
 	   healthy" and would make the two states indistinguishable at a glance */
 	.ready-btn.attn {
 		background: var(--item);
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		border-color: var(--item);
 	}
 	.ready-btn.attn:hover {
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		border-color: var(--item);
 		filter: brightness(1.08);
 	}
 	.ready-btn.on {
 		--chip-bg: var(--accent);
 		background: var(--chip-bg);
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		border-color: var(--chip-bg);
 	}
 	.ready-btn.on.mid {
@@ -227,7 +227,7 @@
 		gap: 7px;
 		padding: 0 14px;
 		background: var(--lobby, #2e7f74);
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		border-color: var(--lobby, #2e7f74);
 		cursor: default;
 	}
@@ -279,7 +279,7 @@
 		justify-content: center;
 		position: relative;
 		margin: -1px -1px -1px -15px;
-		background: color-mix(in srgb, var(--on-accent) 18%, var(--chip-bg));
+		background: color-mix(in srgb, var(--accent-contrast) 18%, var(--chip-bg));
 		border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
 		border-radius: 50%;
 	}
@@ -287,7 +287,7 @@
 		opacity: 0.85;
 	}
 	.seg.re:hover {
-		background: color-mix(in srgb, var(--on-accent) 30%, var(--chip-bg));
+		background: color-mix(in srgb, var(--accent-contrast) 30%, var(--chip-bg));
 	}
 	.seg.re:hover svg {
 		opacity: 1;

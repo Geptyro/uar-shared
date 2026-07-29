@@ -38,10 +38,10 @@
 		align-items: center;
 		gap: 8px;
 		padding: 4px 8px;
-		border-radius: var(--r-sm);
+		border-radius: var(--radius-2);
 	}
 	.row:hover {
-		background: var(--surface-2);
+		background: var(--surface-raised);
 	}
 	.portrait {
 		width: 22px;
@@ -55,7 +55,7 @@
 		flex: 1;
 		font-size: 12.5px;
 		font-weight: 550;
-		color: var(--ink);
+		color: var(--text);
 		text-decoration: none;
 		white-space: nowrap;
 		overflow: hidden;
@@ -65,11 +65,11 @@
 		color: var(--accent);
 	}
 	.mini-tag {
-		font: 550 9.5px/1 var(--mono);
+		font: 550 9.5px/1 var(--font-mono);
 		letter-spacing: 0.04em;
 		padding: 2.5px 7px;
 		border-radius: 99px;
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		background: var(--lobby, #2e7f74);
 		white-space: nowrap;
 	}

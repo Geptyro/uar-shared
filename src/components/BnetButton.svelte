@@ -34,12 +34,12 @@
 		align-items: center;
 		gap: 7px;
 		background: var(--mos);
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		border: 1px solid var(--mos);
 		border-radius: 99px;
 		height: 30px;
 		padding: 0 14px;
-		font: 500 12px/1 var(--mono);
+		font: 500 12px/1 var(--font-mono);
 		text-decoration: none;
 		white-space: nowrap;
 		cursor: pointer;

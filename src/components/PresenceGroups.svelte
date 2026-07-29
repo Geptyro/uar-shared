@@ -106,12 +106,12 @@
 		margin-left: 6px;
 	}
 	.grp-head {
-		font-family: var(--mono);
+		font-family: var(--font-mono);
 		font-size: 10px;
 		font-weight: 600;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--ink-3);
+		color: var(--text-faint);
 		padding: 4px 8px 2px;
 	}
 	.row {
@@ -119,10 +119,10 @@
 		align-items: center;
 		gap: 8px;
 		padding: 4px 8px;
-		border-radius: var(--r-sm);
+		border-radius: var(--radius-2);
 	}
 	.row:hover {
-		background: var(--surface-2);
+		background: var(--surface-raised);
 	}
 	.portrait {
 		width: 22px;
@@ -136,7 +136,7 @@
 		flex: 1;
 		font-size: 12.5px;
 		font-weight: 550;
-		color: var(--ink);
+		color: var(--text);
 		text-decoration: none;
 		white-space: nowrap;
 		overflow: hidden;
@@ -145,7 +145,7 @@
 	/* players who aren't signed in on the site: name only, quieter */
 	.tag-link.plain {
 		font-weight: 450;
-		color: var(--ink-2);
+		color: var(--text-dim);
 	}
 	a.tag-link:hover {
 		color: var(--accent);

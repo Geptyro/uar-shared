@@ -1,0 +1,260 @@
+/*
+ * LAYER 2 — the UAR skin.
+ *
+ * Olive and parchment. The scale, rhythm and shape come from
+ * sveltekit-commons/tokens.css; this file supplies only the colours it leaves
+ * unnamed, plus the domain hues (MOS, hostile, item, gold, the twelve game
+ * modes and thirteen modifiers) that are UAR's alone.
+ *
+ * One source of truth for both consumers: the website imports it in its root
+ * layout, the companion in its renderer entry. Until this file existed the
+ * website carried the whole palette inline in +layout.svelte and the companion
+ * carried a second, older copy in uar-shared/tokens.css — which is how the two
+ * drifted, the copy here never having gained the manual dark theme at all.
+ *
+ * Light is the base. Dark arrives two ways and the list is the same in both:
+ * the device asks for it and you have not overridden it, or you picked Dark on
+ * /account (app.html pins data-theme on <html> before the first paint). Plain
+ * declarations rather than light-dark(), because the dev server ships the CSS
+ * as written and a browser without light-dark() would leave the switch doing
+ * nothing at all. Keep the two dark blocks identical — a token added to one and
+ * not the other goes wrong in only one of the two ways of being dark, which is
+ * a miserable thing to find.
+ *
+ * Shell metrics (--chrome-h, --rail-w, --card-pad-*, the z-scale) are NOT here:
+ * they describe the website's own chrome, which the companion does not have.
+ */
+
+:root {
+	color-scheme: light;
+	--bg: #f1efe8;
+	--surface: #faf9f4;
+	--surface-raised: #eae7dc;
+	/* The rail and the top bar are chrome, so they sit a step *below* the
+	   page rather than above it — the same relationship the dark theme has,
+	   read the other way up. They used to be dark green in both themes,
+	   which is what made light mode look half-finished. */
+	--sidebar: #e5e1d3;
+	--sidebar-2: #d8d3c1;
+	--sidebar-ink: #333829;
+	--sidebar-ink-2: #5f6550;
+	--sidebar-line: #ccc7b3;
+	/* the bar's strongest ink — the page heading and a hovered burger */
+	--sidebar-title: #1b1f14;
+	--border: #ddd8c9;
+	--border-strong: #b9b3a0;
+	--text: #23271c;
+	--text-dim: #5c6151;
+	--text-faint: #8d927f;
+	--accent: #52713d;
+	--accent-dim: #46612f;
+	--accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+	--accent-contrast: #fff;
+	--mos: #3d6483;
+	/* light goes darker on hover, dark goes lighter — same as the accent pair */
+	--mos-hover: #345572;
+	--mos-soft: color-mix(in srgb, var(--mos) 11%, transparent);
+	--hostile: #a84632;
+	--hostile-soft: color-mix(in srgb, var(--hostile) 11%, transparent);
+	--item: #91702c;
+	--item-soft: color-mix(in srgb, var(--item) 13%, transparent);
+	/* prestige, and nothing else: the one place the site goes gold */
+	--gold: #96731d;
+	--gold-soft: color-mix(in srgb, var(--gold) 13%, transparent);
+	--gold-line: color-mix(in srgb, var(--gold) 55%, transparent);
+	/* Game modes. The six ordered difficulties run warm, green to red and
+	   past it for Apocalypse, so the ramp itself says how hard a game was;
+	   the six side modes are cool, so they read as off the ladder rather
+	   than somewhere on it. Both themes carry the same twelve hues at
+	   different lightness, the way --accent and --hostile do. */
+	--mode-1: #4d7d3c;
+	--mode-2: #6d8a2f;
+	--mode-3: #93791d;
+	--mode-4: #b06428;
+	--mode-5: #a84632;
+	--mode-12: #8c2b52;
+	--mode-6: #4c6f8f;
+	--mode-7: #2c7a76;
+	--mode-8: #55609e;
+	--mode-9: #6b559c;
+	--mode-10: #3a7a63;
+	--mode-11: #3b4586;
+	/* Modifiers. Grouped by what they do rather than ranked: the ones that
+	   make the fight harder run warm, the ones that restrict what you may
+	   bring run cool, and the training-mode options are grey — a training
+	   game earns nothing, so it should not look like a hard one. */
+	--mod-1: #a8482f;
+	--mod-3: #9a5a1e;
+	--mod-2: #7a5a8e;
+	--mod-10: #2f7a5e;
+	--mod-11: #4c6f8f;
+	--mod-4: #a03050;
+	--mod-6: #3d6f96;
+	--mod-12: #3a7a4e;
+	--mod-13: #6b6a2a;
+	--mod-5: #7b7f70;
+	--mod-7: #7b7f70;
+	--mod-8: #7b7f70;
+	--mod-9: #7b7f70;
+	--scroll-thumb: #b9b3a0;
+	--scroll-thumb-hover: #9b9480;
+	--shadow-1: 0 1px 2px rgb(30 32 24 / 0.05), 0 1px 1px rgb(30 32 24 / 0.03);
+	--shadow-2: 0 2px 8px rgb(30 32 24 / 0.08), 0 1px 2px rgb(30 32 24 / 0.05);
+	--radius-2: 5px;
+	--radius-3: 8px;
+	--radius-4: 12px;
+	/* shell metrics the top bar and the content both measure against */
+	/* inner padding of cards and panels — one place, so narrow screens
+	   can claw back the width every card was spending twice over */
+	/* The three layers that overlap each other, in one place and in order.
+	   Anything floating must clear every piece of chrome or it gets sliced
+	   by the rail, which is fixed and so painted late whatever the source
+	   order. --z-float is read by uar-shared's HoverPop as well, so the
+	   top-bar pops land on the same layer as our own tooltips. (Sticky
+	   table headers are not on this scale: they stack inside their own
+	   scroller and never meet the chrome.) */
+	--font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
+	/* ── the contract's names for what UAR already had ───────────────── */
+
+	/* One step *below* the page, where the rail and the top bar sit. Raised and
+	   sunken are elevation, not lightness — see sveltekit-commons/tokens.css. */
+	--surface-sunken: #e5e1d3;
+	/* Status. --danger is the same red as --hostile, the domain colour for
+	   enemy units; they are equal today and free to diverge. */
+	--danger: #a84632;
+	--warn: #91702c;
+	--ok: #4d7d3c;
+	/* The smallest corner. UAR's scale started at 5px, so this one is new. */
+	--radius-1: 3px;
+
+	/* ── companion-only, previously stranded in uar-shared/tokens.css ── */
+	--lobby: #2e7f74;
+	--game: #67589f;
+}
+
+/* dark because the device asks for it — unless you have said otherwise */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		color-scheme: dark;
+		--bg: #14170f;
+		--surface: #1b1f16;
+		--surface-raised: #23281c;
+		--sidebar: #101309;
+		--sidebar-2: #1a1e12;
+		--sidebar-ink: #d3d1bf;
+		--sidebar-ink-2: #7c8269;
+		--sidebar-line: #262c1c;
+		--sidebar-title: #fff;
+		--border: #2d3324;
+		--border-strong: #454d38;
+		--text: #e2e0d1;
+		--text-dim: #a3a891;
+		--text-faint: #757b65;
+		--accent: #8db566;
+		--accent-dim: #a0c77c;
+		--accent-contrast: #131608;
+		--mos: #7fadd1;
+		--mos-hover: #98c0e0;
+		--hostile: #d97f61;
+		--item: #cfa95c;
+		--gold: #e2b757;
+		--mode-1: #8db566;
+		--mode-2: #b0c163;
+		--mode-3: #d9b95e;
+		--mode-4: #e59355;
+		--mode-5: #d97f61;
+		--mode-12: #e0699a;
+		--mode-6: #85b3d8;
+		--mode-7: #5cb8b0;
+		--mode-8: #8f9ae0;
+		--mode-9: #a992e0;
+		--mode-10: #63bd97;
+		--mode-11: #7480d8;
+		--mod-1: #e08a6e;
+		--mod-3: #d99a55;
+		--mod-2: #b79ad0;
+		--mod-10: #5fb894;
+		--mod-11: #85b3d8;
+		--mod-4: #e07a97;
+		--mod-6: #7cb4dd;
+		--mod-12: #6fbd85;
+		--mod-13: #c2bf63;
+		--mod-5: #a3a891;
+		--mod-7: #a3a891;
+		--mod-8: #a3a891;
+		--mod-9: #a3a891;
+		--scroll-thumb: #3c4430;
+		--scroll-thumb-hover: #4f5940;
+		--shadow-1: 0 1px 2px rgb(0 0 0 / 0.35);
+		--shadow-2: 0 2px 10px rgb(0 0 0 / 0.45);
+		--surface-sunken: #101309;
+		--danger: #d97f61;
+		--warn: #cfa95c;
+		--ok: #8db566;
+		--lobby: #7bc8ba;
+		--game: #a99ad8;
+	}
+}
+
+/* dark because you picked it on /account, whatever the device says */
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--bg: #14170f;
+	--surface: #1b1f16;
+	--surface-raised: #23281c;
+	--sidebar: #101309;
+	--sidebar-2: #1a1e12;
+	--sidebar-ink: #d3d1bf;
+	--sidebar-ink-2: #7c8269;
+	--sidebar-line: #262c1c;
+	--sidebar-title: #fff;
+	--border: #2d3324;
+	--border-strong: #454d38;
+	--text: #e2e0d1;
+	--text-dim: #a3a891;
+	--text-faint: #757b65;
+	--accent: #8db566;
+	--accent-dim: #a0c77c;
+	--accent-contrast: #131608;
+	--mos: #7fadd1;
+	--mos-hover: #98c0e0;
+	--hostile: #d97f61;
+	--item: #cfa95c;
+	--gold: #e2b757;
+	--mode-1: #8db566;
+	--mode-2: #b0c163;
+	--mode-3: #d9b95e;
+	--mode-4: #e59355;
+	--mode-5: #d97f61;
+	--mode-12: #e0699a;
+	--mode-6: #85b3d8;
+	--mode-7: #5cb8b0;
+	--mode-8: #8f9ae0;
+	--mode-9: #a992e0;
+	--mode-10: #63bd97;
+	--mode-11: #7480d8;
+	--mod-1: #e08a6e;
+	--mod-3: #d99a55;
+	--mod-2: #b79ad0;
+	--mod-10: #5fb894;
+	--mod-11: #85b3d8;
+	--mod-4: #e07a97;
+	--mod-6: #7cb4dd;
+	--mod-12: #6fbd85;
+	--mod-13: #c2bf63;
+	--mod-5: #a3a891;
+	--mod-7: #a3a891;
+	--mod-8: #a3a891;
+	--mod-9: #a3a891;
+	--scroll-thumb: #3c4430;
+	--scroll-thumb-hover: #4f5940;
+	--shadow-1: 0 1px 2px rgb(0 0 0 / 0.35);
+	--shadow-2: 0 2px 10px rgb(0 0 0 / 0.45);
+	--surface-sunken: #101309;
+	--danger: #d97f61;
+	--warn: #cfa95c;
+	--ok: #8db566;
+	--lobby: #7bc8ba;
+	--game: #a99ad8;
+}

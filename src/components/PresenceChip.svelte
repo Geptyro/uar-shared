@@ -66,7 +66,7 @@
 		height: 30px;
 		padding: 0 14px;
 		border-radius: 99px;
-		font: 500 12px/1 var(--mono);
+		font: 500 12px/1 var(--font-mono);
 		font-variant-numeric: tabular-nums;
 		text-decoration: none;
 		white-space: nowrap;
@@ -83,12 +83,12 @@
 	   fallbacks cover consumers that don't load uar-shared tokens yet */
 	.presence-chip.lobby {
 		background: var(--lobby, #2e7f74);
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		border-color: var(--lobby, #2e7f74);
 	}
 	.presence-chip.game {
 		background: var(--game, #67589f);
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		border-color: var(--game, #67589f);
 	}
 	@media (prefers-color-scheme: dark) {

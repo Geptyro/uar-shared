@@ -1,7 +1,7 @@
 {
 	"name": "uar-shared",
-	"version": "0.7.2",
-	"description": "Shared design tokens, Svelte primitives and modules for the UAR website and companion apps",
+	"version": "0.8.0",
+	"description": "UAR's palette and its own Svelte components, on top of sveltekit-commons",
 	"type": "module",
 	"license": "MIT",
 	"svelte": "./src/index.js",
@@ -11,8 +11,7 @@
 			"svelte": "./src/index.js",
 			"default": "./src/index.js"
 		},
-		"./tokens.css": "./src/tokens.css",
-		"./base.css": "./src/base.css",
+		"./palette.css": "./src/palette.css",
 		"./ready": {
 			"types": "./src/ready.d.ts",
 			"default": "./src/ready.js"
@@ -20,10 +19,6 @@
 		"./presence": {
 			"types": "./src/presence.d.ts",
 			"default": "./src/presence.js"
-		},
-		"./place": {
-			"types": "./src/place.d.ts",
-			"default": "./src/place.js"
 		}
 	},
 	"files": [
@@ -31,5 +26,8 @@
 	],
 	"peerDependencies": {
 		"svelte": "^5.0.0"
+	},
+	"dependencies": {
+		"sveltekit-commons": "git+https://github.com/Geptyro/sveltekit-commons.git#semver:^0.5.0"
 	}
 }

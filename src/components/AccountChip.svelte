@@ -73,12 +73,12 @@
 		display: flex;
 		align-items: center;
 		gap: 7px;
-		color: var(--on-accent);
+		color: var(--accent-contrast);
 		/* left 0: the portrait end-cap sits on the chip edge;
 		   right padding runs under the overlapping cog circle */
 		padding: 0 24px 0 0;
 		border-radius: 99px 0 0 99px;
-		font: 500 12px/1 var(--mono);
+		font: 500 12px/1 var(--font-mono);
 		text-decoration: none;
 		white-space: nowrap;
 		background: none;
@@ -115,14 +115,14 @@
 		width: 30px;
 		position: relative;
 		margin: -1px -1px -1px -15px;
-		background: color-mix(in srgb, var(--on-accent) 18%, var(--mos));
-		color: var(--on-accent);
+		background: color-mix(in srgb, var(--accent-contrast) 18%, var(--mos));
+		color: var(--accent-contrast);
 		border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
 		border-radius: 50%;
 		cursor: pointer;
 		transition: all 120ms ease;
 	}
 	.acct-cog:hover {
-		background: color-mix(in srgb, var(--on-accent) 30%, var(--mos));
+		background: color-mix(in srgb, var(--accent-contrast) 30%, var(--mos));
 	}
 </style>

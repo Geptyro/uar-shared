@@ -1,8 +1,12 @@
 <script>
 	/**
-	 * Rows of currently-flagged players (portrait · battletag) — the content of
-	 * the website's hover dropdown, reusable inline. `href(player)` returns a
-	 * profile link or null for plain text.
+	 * Rows of currently-flagged players (portrait · SC2 profile name) — the
+	 * content of the website's hover dropdown, reusable inline. `href(player)`
+	 * returns a profile link or null for plain text.
+	 *
+	 * The name is the one the lobby shows, same as the presence rows; the
+	 * account battletag rides along as the tooltip. Accounts whose profile
+	 * name the site could not resolve fall back to the battletag.
 	 *
 	 * No per-player countdown: someone else's flag lapsing in twelve minutes
 	 * says nothing a reader can act on, and it invites being misread as "leaving
@@ -20,9 +24,9 @@
 	<div class="row">
 		<img class="portrait" src={p.avatar ?? anonPortrait} alt="" />
 		{#if href(p)}
-			<a class="tag-link" href={href(p)}>{p.battletag}</a>
+			<a class="tag-link" href={href(p)} title={p.battletag}>{p.name ?? p.battletag}</a>
 		{:else}
-			<span class="tag-link">{p.battletag}</span>
+			<span class="tag-link" title={p.battletag}>{p.name ?? p.battletag}</span>
 		{/if}
 		{#if statusOf?.(p.battletag) === 'lobby'}
 			<span class="mini-tag">in lobby</span>

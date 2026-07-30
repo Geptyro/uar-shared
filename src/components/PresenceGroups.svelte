@@ -8,6 +8,7 @@
 	 * `href(member)` returns a profile link or null for plain text.
 	 */
 	import anonPortrait from '../assets/anon-portrait.svg';
+	import { bareName } from '../presence.js';
 
 	/**
 	 * `known`: in-game name → { toon, avatar } for players the site knows
@@ -15,32 +16,43 @@
 	 */
 	let { groups = [], gameClock = false, href = () => null, known = {}, toonHref } = $props();
 
+	/** A reporter with no roster line of their own: profile name, else the tag. */
+	const nameOf = (m) => m.name ?? m.battletag;
+
 	/**
 	 * Roster entries, each resolved to its reporting member when there is
 	 * one. Two ways to tie a reporter to their roster line: the selfName
 	 * they send, or — for older app versions, or when the lobby file could
 	 * not be read — the toon the site resolved for that in-game name.
+	 *
+	 * Both sides go through `bareName`: a lobby roster read straight from
+	 * the battlelobby file carries the character code ("Name#451") that
+	 * selfName and the site's directory never do, and matching the two raw
+	 * placed nobody — every reporter fell through to the battletag row.
 	 */
 	function rows(g) {
-		const bySelf = new Map(g.members.filter((m) => m.selfName).map((m) => [m.selfName, m]));
+		const bySelf = new Map(
+			g.members.filter((m) => m.selfName).map((m) => [bareName(m.selfName), m])
+		);
 		const roster = g.members.find((m) => m.roster?.length)?.roster ?? [];
 		if (roster.length === 0) {
 			// no roster reported (e.g. a lobby we could not read) — show what we have
-			return g.members.map((m) => ({ name: m.battletag, member: m }));
+			return g.members.map((m, i) => ({ key: `m${i}`, name: nameOf(m), member: m }));
 		}
 		const claimed = new Set();
-		const out = roster.map((name) => {
+		const out = roster.map((entry, i) => {
+			const name = bareName(entry);
 			let member = bySelf.get(name) ?? null;
 			if (!member) {
 				const toon = known[name]?.toon;
 				if (toon) member = g.members.find((m) => m.toon && m.toon === toon) ?? null;
 			}
 			if (member) claimed.add(member);
-			return { name, member };
+			return { key: `r${i}`, name, member };
 		});
 		// a reporter we could not place is still in this game — list them
-		for (const m of g.members) {
-			if (!claimed.has(m)) out.push({ name: m.battletag, member: m });
+		for (const [i, m] of g.members.entries()) {
+			if (!claimed.has(m)) out.push({ key: `m${i}`, name: nameOf(m), member: m });
 		}
 		return out;
 	}
@@ -55,7 +67,9 @@
 						g.displayTime / 60
 					)} min{/if}
 			</div>
-			{#each rows(g) as row (row.name)}
+			<!-- keyed by position, not name: SC2 profile names are not unique,
+			     and dropping the character code makes a clash likelier still -->
+			{#each rows(g) as row (row.key)}
 				{@const site = row.member ? null : known[row.name]}
 				{@const link = row.member ? href(row.member) : site && toonHref?.(site.toon)}
 				<div class="row">

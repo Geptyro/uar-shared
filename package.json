@@ -1,6 +1,6 @@
 {
 	"name": "uar-shared",
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"description": "UAR's palette and its own Svelte components, on top of sveltekit-commons",
 	"type": "module",
 	"license": "MIT",

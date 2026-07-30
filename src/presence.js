@@ -10,6 +10,19 @@
  */
 
 /**
+ * The bare SC2 profile name. The battlelobby file spells a profile
+ * "Name#451" (name + character code); the in-game roster, the site's player
+ * pages and the reporter's own `selfName` all spell it "Name". Everything
+ * that matches or displays a roster entry goes through this, so the two
+ * spellings line up — including heartbeats from companions that predate the
+ * fix and still send the code.
+ * @param {string} name
+ */
+export function bareName(name) {
+	return name.replace(/#\d+$/, '');
+}
+
+/**
  * @param {Array<{battletag: string, status: 'lobby'|'ingame', uar: boolean,
  *   players?: number, displayTime?: number, roster?: string[],
  *   lobbyId?: number | null, selfName?: string}>} entries

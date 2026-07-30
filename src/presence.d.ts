@@ -23,6 +23,8 @@ export interface PresenceGroup<T extends PresenceGroupEntry = PresenceGroupEntry
 	displayTime?: number;
 }
 
+export declare function bareName(name: string): string;
+
 export declare function groupPresence<T extends PresenceGroupEntry>(
 	entries: T[]
 ): PresenceGroup<T>[];

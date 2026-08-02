@@ -1,6 +1,6 @@
 {
 	"name": "uar-shared",
-	"version": "0.8.2",
+	"version": "0.8.3",
 	"description": "UAR's palette and its own Svelte components, on top of sveltekit-commons",
 	"type": "module",
 	"license": "MIT",
@@ -19,6 +19,10 @@
 		"./presence": {
 			"types": "./src/presence.d.ts",
 			"default": "./src/presence.js"
+		},
+		"./replay": {
+			"types": "./src/replay.d.ts",
+			"default": "./src/replay.js"
 		}
 	},
 	"files": [
